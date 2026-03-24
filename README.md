@@ -82,6 +82,9 @@ cd C:\Herramientas\LMTools-Restart-Service
 # O bien, en una sola línea desde cualquier sitio:
 powershell -ExecutionPolicy Bypass -File "C:\Herramientas\LMTools-Restart-Service\LMTools-Restart-Service.ps1"
 ```
+### A tener en cuenta
+Es probable que debas añadir la carpeta C:\Program Files (x86)\Common Files\Autodesk Shared\AdskLicensing a la lista blanca de tu antivirus.
+
 
 ## Notas
 
