@@ -1,41 +1,92 @@
-# Prueba
+# LMTools Restart Service
 
-Repositorio de prueba para experimentar con GitHub, flujos de trabajo y configuración de OpenClaw.
+Script y utilidades para reiniciar de forma controlada el servidor de licencias de Autodesk basado en FlexLM, forzando además la recarga (reread) del archivo de licencias.
 
 ## Descripción
 
-Este proyecto se utiliza para:
+El objetivo de este proyecto es facilitar el reinicio del servidor de licencias de Autodesk usando `lmutil` y el servicio de Windows asociado.
 
-- Probar el flujo de trabajo con Git y GitHub.
-- Verificar el acceso mediante SSH al repositorio.
-- Hacer pruebas de automatización y agentes (OpenClaw, etc.).
+El script principal:
+
+- Detiene el servidor de licencias de forma forzada (`lmdown`).
+- Espera a que el servidor esté realmente parado.
+- Arranca de nuevo el servicio de Windows del servidor de licencias.
+- Espera a que el servidor de licencias esté arriba y respondiendo.
+- Fuerza un `lmreread` del archivo de licencias.
+- Muestra el estado final con `lmstat`.
+
+## Archivos del repositorio
+
+- `LMTools-Restart-Service.ps1`: script principal de PowerShell que realiza todo el proceso.
+- `Run-LMTools-Restart-Service.bat`: lanzador en batch para ejecutar el script de PowerShell con la política de ejecución adecuada.
 
 ## Requisitos
 
-- Git instalado
-- Acceso SSH a GitHub configurado para el usuario `juanmi18colaborador`
-- Claves en `~/.ssh` correctamente asociadas a la cuenta de GitHub
+- Windows con PowerShell.
+- Herramientas FlexLM instaladas (`lmutil.exe`).
+- Servicio de Windows configurado para el servidor de licencias (por ejemplo, "Flexlm Service 1").
+- Acceso al archivo de licencias (`license.lic`).
 
-## Clonado del repositorio
+## Seguridad y política de ejecución de PowerShell
 
-```bash
-git clone git@github.com:Juanmi18/prueba.git
-cd prueba
+Por defecto, PowerShell puede bloquear la ejecución de scripts por motivos de seguridad.
+
+Para evitar problemas, se recomienda **habilitar la ejecución de scripts firmados o locales** para el usuario actual _antes_ de usar este proyecto:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-Si tienes problemas con el acceso SSH (por ejemplo, `Host key verification failed`), revisa:
+Si no quieres cambiar la política global, el `.bat` ya utiliza:
 
-1. Que tu llave pública está añadida a GitHub.
-2. Que confías en la clave del host de GitHub (entrada en `~/.ssh/known_hosts`).
-3. Que estás usando el usuario correcto de GitHub: `juanmi18colaborador`.
+```bat
+powershell -ExecutionPolicy Bypass -File "LMTools-Restart-Service.ps1"
+```
+
+Esto aplica un bypass **solo para esa ejecución concreta**, pero el enfoque más limpio y recomendado es el `RemoteSigned` por usuario.
+
+## Configuración del script
+
+Edita `LMTools-Restart-Service.ps1` y ajusta estas variables al principio del archivo:
+
+```powershell
+$lmutil  = "C:\\FlexLM\\lmutil.exe"    # Ruta a lmutil.exe
+$licFile = "C:\\FlexLM\\license.lic"  # Ruta al archivo de licencias
+$service = "Flexlm Service 1"            # Nombre del servicio de Windows
+```
+
+Asegúrate de que:
+
+- La ruta a `lmutil.exe` es correcta.
+- El archivo de licencia (`license.lic`) existe y es el que usa tu servidor.
+- El nombre del servicio coincide con el configurado en Servicios de Windows.
 
 ## Uso
 
-De momento este repositorio es solo de prueba, así que puedes usarlo para:
+### Opción 1: Usar el .bat (recomendado para usuarios finales)
 
-- Crear y borrar ramas
-- Probar pull requests
-- Testear hooks, CI, etc.
+1. Copia todo el contenido del repositorio a una carpeta, por ejemplo:
+   `C:\Herramientas\LMTools-Restart-Service`.
+2. Ajusta las rutas en `LMTools-Restart-Service.ps1`.
+3. Haz doble clic en `Run-LMTools-Restart-Service.bat`.
+4. La ventana mostrará los pasos realizados y se quedará en pausa al final (`pause`).
+
+### Opción 2: Ejecutar directamente el script de PowerShell
+
+```powershell
+cd C:\Herramientas\LMTools-Restart-Service
+
+# Si tienes RemoteSigned configurado:
+.\LMTools-Restart-Service.ps1
+
+# O bien, en una sola línea desde cualquier sitio:
+powershell -ExecutionPolicy Bypass -File "C:\Herramientas\LMTools-Restart-Service\LMTools-Restart-Service.ps1"
+```
+
+## Notas
+
+- El script incluye comprobaciones de estado para asegurarse de que el servidor realmente se detiene y se levanta correctamente.
+- En caso de error (por ejemplo, no consigue parar/arrancar en el tiempo esperado), el script mostrará un mensaje en rojo y devolverá un código de salida distinto de 0.
 
 ## Autor
 
