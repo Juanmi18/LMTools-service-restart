@@ -87,8 +87,3 @@ powershell -ExecutionPolicy Bypass -File "C:\Herramientas\LMTools-Restart-Servic
 
 - El script incluye comprobaciones de estado para asegurarse de que el servidor realmente se detiene y se levanta correctamente.
 - En caso de error (por ejemplo, no consigue parar/arrancar en el tiempo esperado), el script mostrará un mensaje en rojo y devolverá un código de salida distinto de 0.
-
-## Autor
-
-- Usuario de GitHub: **juanmi18colaborador**  
-- Email: **juanmi+colaborador@improvisa.com**
