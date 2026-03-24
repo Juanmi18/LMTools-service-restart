@@ -82,11 +82,10 @@ cd C:\Herramientas\LMTools-Restart-Service
 # O bien, en una sola línea desde cualquier sitio:
 powershell -ExecutionPolicy Bypass -File "C:\Herramientas\LMTools-Restart-Service\LMTools-Restart-Service.ps1"
 ```
-### A tener en cuenta
-Es probable que debas añadir la carpeta C:\Program Files (x86)\Common Files\Autodesk Shared\AdskLicensing a la lista blanca de tu antivirus.
-
 
 ## Notas
 
 - El script incluye comprobaciones de estado para asegurarse de que el servidor realmente se detiene y se levanta correctamente.
 - En caso de error (por ejemplo, no consigue parar/arrancar en el tiempo esperado), el script mostrará un mensaje en rojo y devolverá un código de salida distinto de 0.
+- Es probable que debas añadir la carpeta C:\Program Files (x86)\Common Files\Autodesk Shared\AdskLicensing a la lista blanca de tu antivirus.
+
